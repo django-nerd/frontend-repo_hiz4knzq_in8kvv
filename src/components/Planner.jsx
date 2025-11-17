@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { MapPin, Route, BatteryCharging, Sparkles } from 'lucide-react'
 
 export default function Planner() {
   const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
@@ -38,42 +40,77 @@ export default function Planner() {
   }
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-10">
-      <h2 className="text-2xl font-bold">Trip Planner</h2>
-      <div className="grid md:grid-cols-3 gap-6 mt-6">
-        <div className="bg-white p-4 rounded-lg border space-y-3">
+    <section id="plan" className="max-w-6xl mx-auto px-4 py-16">
+      <motion.h2
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-3xl font-bold"
+      >
+        Trip Planner
+      </motion.h2>
+
+      <div className="grid md:grid-cols-3 gap-6 mt-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.05 }}
+          className="bg-white/80 backdrop-blur p-5 rounded-xl border shadow-sm space-y-4"
+        >
           <div className="grid grid-cols-2 gap-3">
             {Object.keys(form).map((key) => (
               <label key={key} className="text-sm text-gray-700">
-                <span className="block mb-1 capitalize">{key.replaceAll('_', ' ')}</span>
+                <span className="block mb-1 capitalize flex items-center gap-2">
+                  {key.includes('lat') || key.includes('lng') ? <MapPin className="h-4 w-4" /> : null}
+                  {key.includes('battery') || key.includes('efficiency') ? <BatteryCharging className="h-4 w-4" /> : null}
+                  {key.replaceAll('_', ' ')}
+                </span>
                 <input
                   type="number"
                   step="any"
                   name={key}
                   value={form[key]}
                   onChange={handleChange}
-                  className="w-full border rounded px-2 py-1"
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 />
               </label>
             ))}
           </div>
-          <button onClick={submit} className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700" disabled={loading}>
+          <button
+            onClick={submit}
+            className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-emerald-500 text-white py-2.5 rounded-lg font-semibold shadow hover:opacity-95"
+            disabled={loading}
+          >
+            <Route className="h-4 w-4" />
             {loading ? 'Planning…' : 'Plan Trip'}
           </button>
-        </div>
+        </motion.div>
 
-        <div className="md:col-span-2 bg-white p-4 rounded-lg border">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="md:col-span-2 bg-white/80 backdrop-blur p-6 rounded-xl border shadow-sm"
+        >
           {!plan ? (
             <p className="text-gray-600">Enter trip + vehicle details to generate a plan.</p>
           ) : (
-            <div className="space-y-3">
-              <p className="text-gray-700">Distance: <b>{plan.total_distance_km} km</b> · ETA: <b>{plan.estimated_duration_minutes} min</b></p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 text-gray-700">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                <p>
+                  Distance: <b>{plan.total_distance_km} km</b> · ETA: <b>{plan.estimated_duration_minutes} min</b>
+                </p>
+              </div>
               {plan.stops?.length ? (
                 <div>
                   <p className="font-semibold mb-2">Stops</p>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {plan.stops.map((s, i) => (
-                      <li key={i} className="p-3 border rounded">
+                      <li key={i} className="p-3 border rounded-lg bg-white">
                         <p className="font-medium">{s.station_name}</p>
                         <p className="text-sm text-gray-600">Charge {s.charge_minutes} min · ({s.latitude.toFixed(4)}, {s.longitude.toFixed(4)})</p>
                         {s.notes && <p className="text-sm text-gray-500 mt-1">{s.notes}</p>}
@@ -86,7 +123,7 @@ export default function Planner() {
               )}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

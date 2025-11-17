@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { User, LayoutDashboard, Gauge, Settings } from 'lucide-react'
 
 export default function Dashboards() {
   const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
@@ -21,45 +23,76 @@ export default function Dashboards() {
   useEffect(() => { load() }, [])
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+    <section id="dashboards-user" className="max-w-6xl mx-auto px-4 py-16 space-y-10">
+      <motion.h2
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-3xl font-bold"
+      >
+        Dashboards
+      </motion.h2>
+
       <div className="flex items-center gap-2">
-        <input value={email} onChange={(e)=>setEmail(e.target.value)} className="border rounded px-3 py-2" />
-        <button onClick={load} className="px-4 py-2 bg-blue-600 text-white rounded">Refresh</button>
+        <input value={email} onChange={(e)=>setEmail(e.target.value)} className="border rounded px-3 py-2 bg-white/80 backdrop-blur" />
+        <button onClick={load} className="px-4 py-2 bg-blue-600 text-white rounded shadow">Refresh</button>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white p-4 border rounded">
-          <h3 className="font-semibold mb-3">User Dashboard</h3>
+        <motion.div
+          id="dashboards-user"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="bg-white/80 backdrop-blur p-5 border rounded-xl shadow-sm"
+        >
+          <h3 className="font-semibold mb-3 flex items-center gap-2"><User className="h-4 w-4" /> User Dashboard</h3>
           <ul className="space-y-2">
             {bookings.map(b => (
-              <li key={b.id} className="p-2 border rounded text-sm">
+              <li key={b.id} className="p-3 border rounded-lg text-sm bg-white">
                 <p><b>Booking:</b> {new Date(b.start_time).toLocaleString()}</p>
                 <p className="text-gray-600">{b.status} · {b.duration_minutes} min</p>
               </li>
             ))}
             {!bookings.length && <p className="text-gray-500">No bookings yet</p>}
           </ul>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-4 border rounded">
-          <h3 className="font-semibold mb-3">Operator Dashboard</h3>
+        <motion.div
+          id="dashboards-operator"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="bg-white/80 backdrop-blur p-5 border rounded-xl shadow-sm"
+        >
+          <h3 className="font-semibold mb-3 flex items-center gap-2"><LayoutDashboard className="h-4 w-4" /> Operator Dashboard</h3>
           <p className="text-sm text-gray-600">Active stations: {stations.length}</p>
           <ul className="mt-2 space-y-1 text-sm">
             {stations.slice(0,5).map(s => (
               <li key={s.id}>• {s.name} · Ports: {s.available_ports}</li>
             ))}
           </ul>
-        </div>
+        </motion.div>
 
-        <div className="bg-white p-4 border rounded">
-          <h3 className="font-semibold mb-3">Admin Panel</h3>
+        <motion.div
+          id="dashboards-admin"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="bg-white/80 backdrop-blur p-5 border rounded-xl shadow-sm"
+        >
+          <h3 className="font-semibold mb-3 flex items-center gap-2"><Settings className="h-4 w-4" /> Admin Panel</h3>
           <p className="text-sm text-gray-600">Plans available: {plans.length}</p>
           <ul className="mt-2 space-y-1 text-sm">
             {plans.map(p => (
               <li key={p.id}>• {p.name} · ${p.monthly_fee_usd}/mo</li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
